@@ -9,7 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        'roobert': ['"Roobert TRIAL"', 'sans-serif'],
+        sans: ['var(--font-roboto)', 'sans-serif'],
+        serif: ['var(--font-playfair)', 'serif'],
       },
     },
   },

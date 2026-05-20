@@ -1,74 +1,74 @@
-import React from 'react';
-
-
-
-const DecoLeft = () => (
-  <svg
-    className="absolute top-0 left-0 w-full h-full opacity-100 z-0"
-    viewBox="0 0 1600 900"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    preserveAspectRatio="xMidYMid slice"
-  >
-    <path d="M 0 149 L 300 450 L 0 751" stroke="#A0A4AB" strokeWidth="2" strokeDasharray="2 8" strokeLinecap="round" />
-  </svg>
-);
-
-const DecoRight = () => (
-  <svg
-    className="absolute top-0 right-0 w-full h-full opacity-100 z-0"
-    viewBox="0 0 1600 900"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    preserveAspectRatio="xMidYMid slice"
-  >
-    <path d="M 1600 149 L 1300 450 L 1600 751" stroke="#A0A4AB" strokeWidth="2" strokeDasharray="2 8" strokeLinecap="round" />
-  </svg>
-);
-
-const DiscoverButton = () => (
-  <div className="absolute top-[458px] left-[32px] w-[150px] h-[44px] cursor-pointer z-10">
-    <img src="/button-icon-text-shrunk.svg" alt="Discover A.I." />
-  </div>
-);
-
-const TestButton = () => (
-  <div className="absolute top-[458px] left-[1711px] w-[127px] h-[44px] cursor-pointer z-10">
-    <img src="/button-icon-text-shrunk (1).svg" alt="Take Test" />
-  </div>
-);
-
+"use client";
+import React, { useRef } from 'react';
+import { gsap } from 'gsap';
+import Image from 'next/image';
 export default function Home() {
+  const leftSideContentRef = useRef(null);
+  const centerContentRef = useRef(null);
+
+  const skincareTextRef = useRef(null);
+  const rightSideContentRef = useRef(null);
+
+  const handleMouseEnter = () => {
+    gsap.to(leftSideContentRef.current, { opacity: 0, x: -100, duration: 1, ease: 'power3.inOut' });
+    gsap.to(centerContentRef.current, { x: -300, duration: 1, ease: 'power3.inOut' });
+    gsap.to(skincareTextRef.current, { paddingLeft: 0, duration: 1, ease: 'power3.inOut' });
+  };
+
+  const handleMouseLeave = () => {
+    gsap.to(leftSideContentRef.current, { opacity: 1, x: 0, duration: 1, ease: 'power3.inOut' });
+    gsap.to(centerContentRef.current, { x: 0, duration: 1, ease: 'power3.inOut' });
+    gsap.to(skincareTextRef.current, { paddingLeft: '8rem', duration: 1, ease: 'power3.inOut' });
+  };
+
+  const handleMouseEnterLeft = () => {
+    gsap.to(rightSideContentRef.current, { opacity: 0, x: 100, duration: 1, ease: 'power3.inOut' });
+    gsap.to(centerContentRef.current, { x: 300, duration: 1, ease: 'power3.inOut' });
+    gsap.to(skincareTextRef.current, { paddingLeft: '16rem', duration: 1, ease: 'power3.inOut' });
+  };
+
+  const handleMouseLeaveLeft = () => {
+    gsap.to(rightSideContentRef.current, { opacity: 1, x: 0, duration: 1, ease: 'power3.inOut' });
+    gsap.to(centerContentRef.current, { x: 0, duration: 1, ease: 'power3.inOut' });
+    gsap.to(skincareTextRef.current, { paddingLeft: '8rem', duration: 1, ease: 'power3.inOut' });
+  };
   return (
-    <div className="bg-[#FCFCFC] text-black min-h-screen p-4 sm:p-8 flex flex-col overflow-x-hidden">
-      <header className="w-full max-w-[1920px] mx-auto flex justify-between items-center h-16 z-10 px-4 sm:px-8">
-        <div className="text-xs sm:text-sm">
-            <span className="font-bold text-black tracking-normal">SKINSTRIC</span><span className="text-gray-400 ml-[12px]">[ INTRO ]</span>
-          </div>
-        <button className="bg-black text-white px-4 sm:px-8 py-2 sm:py-3 text-xs font-semibold tracking-widest">
-          ENTER CODE
-        </button>
+    <div className="page-container">
+      <header className="header">
+        <div className="header-left">
+          <span className="brand-logo">SKINSTRIC</span>
+          <span>[ INTRO ]</span>
+        </div>
+        <div className="header-right">
+          <button className="enter-code-btn">ENTER CODE</button>
+        </div>
       </header>
-
-      <main className="grow flex flex-col items-center justify-center text-center relative">
-        <DecoLeft />
-        <DecoRight />
-        <DiscoverButton />
-        <TestButton />
-
-        <div className="absolute top-[361px] left-[620px] w-[680px] h-[240px] z-10 text-center font-roobert text-[128px] leading-[120px] tracking-[-0.07em]">
-          <h1 className="font-light tracking-tighter">
+      <main className="main-content">
+        <div className="side-content left" ref={leftSideContentRef}>
+          <a href="#" className="side-link" onMouseEnter={handleMouseEnterLeft} onMouseLeave={handleMouseLeaveLeft}>
+                        <Image src="/button-icon-text-shrunk.svg" alt="Discover A.I." width={150} height={44} />
+          </a>
+        </div>
+        <div className="center-content" ref={centerContentRef}>
+          <h1>
             Sophisticated
-          </h1>
-          <h1 className="font-bold tracking-tighter">
-            skincare
+            <br />
+            <span className="skincare-text" ref={skincareTextRef}>skincare</span>
           </h1>
         </div>
+        <div className="side-content right" ref={rightSideContentRef}>
+          <a href="#" className="side-link" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                        <Image src="/button-icon-text-shrunk%20(1).svg" alt="Take Test" width={127} height={44} />
+          </a>
+        </div>
       </main>
-
-      <footer className="absolute top-[862px] left-[32px] w-[316px] h-[72px] z-10">
-        <p className="font-roobert font-normal text-sm leading-6 tracking-normal uppercase">
-          SKINSTRIC DEVELOPED AN A.I. THAT CREATES A HIGHLY-PERSONALISED ROUTINE TAILORED TO WHAT YOUR SKIN NEEDS.
+      <footer className="footer">
+        <p>
+          SKINSTRIC DEVELOPED AN A.I. THAT CREATES
+          <br />
+          A HIGHLY-PERSONALISED ROUTINE TAILORED TO
+          <br />
+          WHAT YOUR SKIN NEEDS.
         </p>
       </footer>
     </div>
