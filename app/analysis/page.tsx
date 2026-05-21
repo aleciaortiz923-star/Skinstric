@@ -1,38 +1,31 @@
 "use client";
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 
 const AnalysisPage = () => {
   const router = useRouter();
   const [name, setName] = useState('');
+  const [isNameValid, setIsNameValid] = useState(false);
+
+  const validateName = (name: string) => {
+    const nameParts = name.trim().split(' ');
+    return nameParts.length >= 2 && nameParts.every(part => part.length > 0);
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    setName(newName);
+    setIsNameValid(validateName(newName));
+  };
 
   const handleBackClick = () => {
     router.push('/');
   };
 
   const handleNameSubmit = async () => {
-    if (name.trim() === '') return; // Don't submit empty names
-
-    try {
-      const params = new URLSearchParams();
-      params.append('name', name);
-
-      const response = await axios.post('https://us-central1-api-skinstric-ai.cloudfunctions.net/skinstricPhaseOne', params, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      });
-
-      console.log('API Response:', response.data);
-      router.push('/location');
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('API Error Response:', error.response?.data);
-      } else {
-        console.error('API Error:', error);
-      }
-    }
+    if (!isNameValid) return;
+    router.push(`/location?name=${encodeURIComponent(name)}`);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -60,7 +53,7 @@ const AnalysisPage = () => {
               className="introduce-yourself"
               placeholder="Introduce Yourself"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={handleNameChange}
               onKeyDown={handleKeyDown}
             />
           </div>
@@ -71,6 +64,11 @@ const AnalysisPage = () => {
           <div className="back-arrow"></div>
           <span>BACK</span>
         </button>
+        {name && (
+          <button className="proceed-btn" onClick={handleNameSubmit} disabled={!isNameValid}>
+            <Image src="/proceed.svg" alt="Proceed" width={123} height={44} />
+          </button>
+        )}
       </footer>
     </div>
   );

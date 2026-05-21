@@ -1,34 +1,59 @@
 "use client";
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 
 const LocationPage = () => {
   const router = useRouter();
-  const [name, setName] = useState('');
+  const searchParams = useSearchParams();
+  const [location, setLocation] = useState('');
+  const [isLocationValid, setIsLocationValid] = useState(false);
+
+  const validateLocation = (loc: string) => {
+    return loc.trim().length >= 2;
+  };
+
+  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newLocation = e.target.value;
+    setLocation(newLocation);
+    setIsLocationValid(validateLocation(newLocation));
+  };
 
   const handleBackClick = () => {
     router.push('/');
   };
 
-  const handleNameSubmit = async () => {
-    if (name.trim() === '') return; // Don't submit empty names
+  const handleLocationSubmit = async () => {
+    if (!isLocationValid) return;
+
+    const nameFromUrl = searchParams.get('name');
+    if (!nameFromUrl) return;
 
     try {
-      const response = await axios.post('https://us-central1-api-skinstric-ai.cloudfunctions.net/skinstricPhaseOne', {
-        name: name,
+      const response = await fetch('/api/skinstric', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: nameFromUrl, location }),
       });
-      console.log('API Response:', response.data);
-      // Handle success (e.g., navigate to the next page or show a success message)
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API request failed with status ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('API Response:', data);
+      router.push('/image');
     } catch (error) {
-      console.error('API Error:', error);
-      // Handle error (e.g., show an error message)
+      console.error('API Call Failed:', error);
     }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      handleNameSubmit();
+      handleLocationSubmit();
     }
   };
 
@@ -50,8 +75,8 @@ const LocationPage = () => {
               type="text"
               className="introduce-yourself"
               placeholder="Where are you from?"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={location}
+              onChange={handleLocationChange}
               onKeyDown={handleKeyDown}
             />
           </div>
@@ -62,6 +87,11 @@ const LocationPage = () => {
           <div className="back-arrow"></div>
           <span>BACK</span>
         </button>
+        {location && (
+          <button className="proceed-btn" onClick={handleLocationSubmit} disabled={!isLocationValid}>
+            <Image src="/proceed.svg" alt="Proceed" width={123} height={44} />
+          </button>
+        )}
       </footer>
     </div>
   );
