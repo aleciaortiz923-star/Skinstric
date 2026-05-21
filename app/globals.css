@@ -111,10 +111,6 @@ body {
   right: -226px;
 }
 
-
-
-
-
 .side-link {
   display: flex;
   align-items: center;
@@ -154,13 +150,162 @@ body {
   transform: rotate(-45deg);
 }
 
-
-
-
-
 .footer {
   padding: 1rem 2rem;
   background-color: #fff;
   color: #000;
   font-size: 0.8rem;
+}
+
+/* Analysis Page Styles */
+.analysis-page .main-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.analysis-header {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.analysis-side-text {
+  font-size: 16px;
+  color: #000;
+  font-weight: 600;
+  margin-top: 64px;
+  line-height: 24px;
+  letter-spacing: -0.02em;
+}
+
+.diamond-container {
+  position: relative;
+  width: 560px;
+  height: 560px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5rem;
+}
+
+.diamond-container::before,
+.diamond-container::after,
+.inner-diamond {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+
+.diamond-container::before {
+  width: 100%;
+  height: 100%;
+  border: 2px dotted #e0e0e0; /* Lightest */
+  animation: spin-clockwise 40s linear infinite;
+}
+
+.diamond-container::after {
+  width: 85%;
+  height: 85%;
+  border: 2px dotted #c0c0c0; /* Medium */
+  animation: spin-counter-clockwise 50s linear infinite;
+}
+
+.inner-diamond {
+  width: 70%;
+  height: 70%;
+  border: 2px dotted #a0a0a0; /* Darkest */
+  animation: spin-clockwise 30s linear infinite;
+}
+
+.click-to-type,
+.introduce-yourself {
+  position: relative;
+  z-index: 1;
+}
+
+.click-to-type {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: #a0a0a0;
+  margin-bottom: 2rem;
+}
+
+.introduce-yourself {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #000;
+  padding-bottom: 0.25rem;
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-align: center;
+  color: #000;
+  width: 65%;
+}
+
+.introduce-yourself:focus {
+  outline: none;
+}
+
+.introduce-yourself::placeholder {
+  color: #a0a0a0;
+  opacity: 1; 
+}
+
+.analysis-footer {
+  display: flex;
+  justify-content: flex-start;
+  padding: 1rem 2rem;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.back-arrow {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #000;
+  transform: rotate(45deg);
+  margin-right: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.back-arrow::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-left: 2px solid #000;
+  border-bottom: 2px solid #000;
+  transform: rotate(45deg) translate(2px, -2px);
+}
+
+@keyframes spin-clockwise {
+  from {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(405deg);
+  }
+}
+
+@keyframes spin-counter-clockwise {
+  from {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(-315deg);
+  }
 }

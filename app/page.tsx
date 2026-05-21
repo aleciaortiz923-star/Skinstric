@@ -2,12 +2,14 @@
 import React, { useRef } from 'react';
 import { gsap } from 'gsap';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
 export default function Home() {
   const leftSideContentRef = useRef(null);
   const centerContentRef = useRef(null);
-
   const skincareTextRef = useRef(null);
   const rightSideContentRef = useRef(null);
+  const router = useRouter();
 
   const handleMouseEnter = () => {
     gsap.to(leftSideContentRef.current, { opacity: 0, x: -100, duration: 1, ease: 'power3.inOut' });
@@ -32,6 +34,11 @@ export default function Home() {
     gsap.to(centerContentRef.current, { x: 0, duration: 1, ease: 'power3.inOut' });
     gsap.to(skincareTextRef.current, { paddingLeft: '8rem', duration: 1, ease: 'power3.inOut' });
   };
+
+  const handleTakeTestClick = () => {
+    router.push('/analysis');
+  };
+
   return (
     <div className="page-container">
       <header className="header">
@@ -46,7 +53,7 @@ export default function Home() {
       <main className="main-content">
         <div className="side-content left" ref={leftSideContentRef}>
           <a href="#" className="side-link" onMouseEnter={handleMouseEnterLeft} onMouseLeave={handleMouseLeaveLeft}>
-                        <Image src="/button-icon-text-shrunk.svg" alt="Discover A.I." width={150} height={44} />
+            <Image src="/button-icon-text-shrunk.svg" alt="Discover A.I." width={150} height={44} />
           </a>
         </div>
         <div className="center-content" ref={centerContentRef}>
@@ -57,8 +64,8 @@ export default function Home() {
           </h1>
         </div>
         <div className="side-content right" ref={rightSideContentRef}>
-          <a href="#" className="side-link" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                        <Image src="/button-icon-text-shrunk%20(1).svg" alt="Take Test" width={127} height={44} />
+          <a href="#" className="side-link" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={handleTakeTestClick}>
+            <Image src="/button-icon-text-shrunk%20(1).svg" alt="Take Test" width={127} height={44} />
           </a>
         </div>
       </main>
