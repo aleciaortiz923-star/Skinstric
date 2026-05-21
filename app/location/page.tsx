@@ -8,6 +8,8 @@ const LocationPage = () => {
   const searchParams = useSearchParams();
   const [location, setLocation] = useState('');
   const [isLocationValid, setIsLocationValid] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionComplete, setSubmissionComplete] = useState(false);
 
   const validateLocation = (loc: string) => {
     return loc.trim().length >= 2;
@@ -26,8 +28,12 @@ const LocationPage = () => {
   const handleLocationSubmit = async () => {
     if (!isLocationValid) return;
 
+    setIsSubmitting(true);
     const nameFromUrl = searchParams.get('name');
-    if (!nameFromUrl) return;
+    if (!nameFromUrl) {
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const response = await fetch('/api/skinstric', {
@@ -45,9 +51,15 @@ const LocationPage = () => {
 
       const data = await response.json();
       console.log('API Response:', data);
-      router.push('/image');
+
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setSubmissionComplete(true);
+      }, 5000);
+
     } catch (error) {
       console.error('API Call Failed:', error);
+      setIsSubmitting(false);
     }
   };
 
@@ -70,15 +82,30 @@ const LocationPage = () => {
         <div className="center-content">
           <div className="diamond-container">
             <div className="inner-diamond"></div>
-            <p className="click-to-type">CLICK TO TYPE</p>
-            <input
-              type="text"
-              className="introduce-yourself"
-              placeholder="Where are you from?"
-              value={location}
-              onChange={handleLocationChange}
-              onKeyDown={handleKeyDown}
-            />
+            {!isSubmitting && !submissionComplete && (
+              <>
+                <p className="click-to-type">CLICK TO TYPE</p>
+                <input
+                  type="text"
+                  className="introduce-yourself"
+                  placeholder="Where are you from?"
+                  value={location}
+                  onChange={handleLocationChange}
+                  onKeyDown={handleKeyDown}
+                />
+              </>
+            )}
+            {isSubmitting && (
+              <div className="submission-processing">
+                <p>Submission Processing</p>
+                <div className="loading-dots">
+                  <span>.</span><span>.</span><span>.</span>
+                </div>
+              </div>
+            )}
+            {submissionComplete && (
+              <p className="submission-success">Thank you! Please proceed to the next step</p>
+            )}
           </div>
         </div>
       </main>
@@ -87,8 +114,8 @@ const LocationPage = () => {
           <div className="back-arrow"></div>
           <span>BACK</span>
         </button>
-        {location && (
-          <button className="proceed-btn" onClick={handleLocationSubmit} disabled={!isLocationValid}>
+        {submissionComplete && (
+          <button className="proceed-btn" onClick={() => router.push('/image')}>
             <Image src="/proceed.svg" alt="Proceed" width={123} height={44} />
           </button>
         )}

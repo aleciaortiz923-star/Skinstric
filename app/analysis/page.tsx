@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 const AnalysisPage = () => {
@@ -64,11 +63,6 @@ const AnalysisPage = () => {
           <div className="back-arrow"></div>
           <span>BACK</span>
         </button>
-        {name && (
-          <button className="proceed-btn" onClick={handleNameSubmit} disabled={!isNameValid}>
-            <Image src="/proceed.svg" alt="Proceed" width={123} height={44} />
-          </button>
-        )}
       </footer>
     </div>
   );

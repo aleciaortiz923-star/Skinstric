@@ -21,6 +21,9 @@ const ResultsPage = () => {
         <div className="dual-diamond-wrapper">
           <div className="diamond-container">
             <div className="inner-diamond"></div>
+            <div className="camera-scan-wrapper">
+              <div className="camera-icon"></div>
+            </div>
           </div>
           <div className="diamond-container">
             <div className="inner-diamond"></div>
