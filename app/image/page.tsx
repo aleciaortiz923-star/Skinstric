@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from 'next/navigation';
+import { FaMountainSun } from 'react-icons/fa6';
 
 const ResultsPage = () => {
   const router = useRouter();
@@ -27,6 +28,15 @@ const ResultsPage = () => {
           </div>
           <div className="diamond-container">
             <div className="inner-diamond"></div>
+            <div className="gallery-icon-wrapper">
+              <div className="icon-in-circle">
+                <FaMountainSun className="gallery-icon" />
+              </div>
+              <div className="gallery-text">
+                ALLOW A.I. <br />
+                ACSESS TO GALLERY
+              </div>
+            </div>
           </div>
         </div>
       </main>
