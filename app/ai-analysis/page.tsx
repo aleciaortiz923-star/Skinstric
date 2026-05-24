@@ -34,8 +34,12 @@ const AIAnalysisPage = () => {
   };
 
   const handleBackClick = () => {
-    router.push('/image');
+    router.push('/');
   };
+
+  if (!analysisResult) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="page-container analysis-page">

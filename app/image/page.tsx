@@ -107,7 +107,7 @@ const ResultsPage = () => {
           body: JSON.stringify({ image: imageToAnalyze }),
         });
         const analysisResult = await response.json();
-        router.push(`/demographics?results=${JSON.stringify(analysisResult)}`);
+        router.push(`/ai-analysis?results=${JSON.stringify(analysisResult)}`);
       } catch (error) {
         console.error('Error analyzing image:', error);
       } finally {

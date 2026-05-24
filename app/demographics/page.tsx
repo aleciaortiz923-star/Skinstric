@@ -1,6 +1,6 @@
 "use client";
-import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useMemo, useEffect } from 'react';
 import './styles.css';
 
 interface AnalysisResult {
@@ -13,83 +13,72 @@ interface AnalysisResult {
 
 const DemographicsPage = () => {
   const router = useRouter();
-  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeView, setActiveView] = useState('race');
-  const [selectedConcept, setSelectedConcept] = useState<{ name: string; value: number } | null>(null);
+  const searchParams = useSearchParams();
+  const results = searchParams.get('results');
 
-  const getTopConcept = (concepts: { name: string; value: number }[] | undefined) => {
-    if (!concepts || concepts.length === 0) {
+  const analysisResult = useMemo<AnalysisResult | null>(() => {
+    if (!results) return null;
+    try {
+      return JSON.parse(results);
+    } catch (error) {
+      console.error('Failed to parse analysis results:', error);
       return null;
     }
+  }, [results]);
+
+  const [activeView, setActiveView] = useState('race');
+  const [overriddenConcept, setOverriddenConcept] = useState<{ name: string; value: number } | null>(null);
+
+  const getTopConcept = (concepts: { name: string; value: number }[] | undefined) => {
+    if (!concepts || concepts.length === 0) return null;
     return concepts.reduce((p, c) => (p.value > c.value ? p : c));
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('https://us-central1-api-skinstric-ai.cloudfunctions.net/skinstricPhaseTwo');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setAnalysisResult(data);
-        const topRace = getTopConcept(data?.demographics?.multicultural_appearance?.concepts);
-        if (topRace) {
-          setSelectedConcept(topRace);
-        }
-      } catch (err) {
-        console.error('Failed to fetch analysis results:', err);
-        setError('Failed to fetch analysis results');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const topRace = useMemo(() => getTopConcept(analysisResult?.demographics?.multicultural_appearance?.concepts), [analysisResult]);
+  const topAge = useMemo(() => getTopConcept(analysisResult?.demographics?.age_appearance?.concepts), [analysisResult]);
+  const topGender = useMemo(() => getTopConcept(analysisResult?.demographics?.gender_appearance?.concepts), [analysisResult]);
 
-    fetchData();
-  }, []);
+  const defaultConcept = useMemo(() => {
+    if (activeView === 'race') return topRace || topAge || topGender;
+    if (activeView === 'age') return topAge || topRace || topGender;
+    if (activeView === 'sex') return topGender || topRace || topAge;
+    return topRace || topAge || topGender;
+  }, [activeView, topRace, topAge, topGender]);
+
+  const selectedConcept = overriddenConcept || defaultConcept;
 
   const handleSidebarClick = (view: string) => {
     setActiveView(view);
-    let topConcept = null;
-    if (view === 'race') {
-      topConcept = getTopConcept(analysisResult?.demographics?.multicultural_appearance?.concepts);
-    } else if (view === 'age') {
-      topConcept = getTopConcept(analysisResult?.demographics?.age_appearance?.concepts);
-    } else if (view === 'sex') {
-      topConcept = getTopConcept(analysisResult?.demographics?.gender_appearance?.concepts);
-    }
-    setSelectedConcept(topConcept);
+    setOverriddenConcept(null);
   };
 
+  useEffect(() => {
+    console.log('Analysis Result from API:', analysisResult);
+  }, [analysisResult]);
+
   const handleBackClick = () => {
-    router.push('/ai-analysis');
+    router.push('/');
   };
 
   const handleConceptClick = (concept: { name: string; value: number }) => {
-    setSelectedConcept(concept);
+    setOverriddenConcept(concept);
   };
 
   const handleRedirectToHome = () => {
     router.push('/');
   };
 
-  if (loading) {
+  if (!analysisResult) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>{error}</div>;
+  if (!selectedConcept) {
+    return <div>No demographic data available for this image.</div>;
   }
 
-  if (!analysisResult || !analysisResult.demographics || !selectedConcept) {
-    return <div>Loading...</div>;
-  }
-
-  const raceData = analysisResult.demographics.multicultural_appearance.concepts;
-  const ageData = analysisResult.demographics.age_appearance.concepts;
-  const genderData = analysisResult.demographics.gender_appearance.concepts;
+  const raceData = analysisResult.demographics?.multicultural_appearance?.concepts ?? [];
+  const ageData = analysisResult.demographics?.age_appearance?.concepts ?? [];
+  const genderData = analysisResult.demographics?.gender_appearance?.concepts ?? [];
 
   const renderContent = () => {
     let data, listTitle;
