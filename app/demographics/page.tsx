@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './styles.css';
 
 interface AnalysisResult {
@@ -13,81 +13,77 @@ interface AnalysisResult {
 
 const DemographicsPage = () => {
   const router = useRouter();
-
-  // MOCK DATA - This is temporary to show the UI
-  const mockAnalysisResult = {
-    demographics: {
-      multicultural_appearance: {
-        concepts: [
-          { name: 'East Asian', value: 0.96 },
-          { name: 'White', value: 0.03 },
-          { name: 'South Asian', value: 0.02 },
-          { name: 'Black', value: 0.00 },
-          { name: 'Latino Hispanic', value: 0.00 },
-          { name: 'South East Asian', value: 0.00 },
-          { name: 'Middle Eastern', value: 0.00 }
-        ]
-      },
-      age_appearance: {
-        concepts: [
-          { name: '0-9', value: 0.00 },
-          { name: '10-19', value: 0.04 },
-          { name: '20-29', value: 0.96 },
-          { name: '30-39', value: 0.02 },
-          { name: '40-49', value: 0.00 },
-          { name: '50-59', value: 0.00 },
-          { name: '60-69', value: 0.00 },
-          { name: '70+', value: 0.00 }
-        ]
-      },
-      gender_appearance: {
-        concepts: [
-          { name: 'female', value: 0.98 },
-          { name: 'male', value: 0.02 }
-        ]
-      }
-    }
-  };
-
-  const analysisResult: AnalysisResult | null = mockAnalysisResult;
-
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeView, setActiveView] = useState('race');
-  const [selectedConcept, setSelectedConcept] = useState(() => {
-    return analysisResult.demographics.multicultural_appearance.concepts.reduce(
-      (prev, current) => (prev.value > current.value ? prev : current)
-    );
-  });
+  const [selectedConcept, setSelectedConcept] = useState<{ name: string; value: number } | null>(null);
 
-  const handleBackClick = () => {
-    router.push(`/ai-analysis?results=${JSON.stringify(analysisResult)}`);
+  const getTopConcept = (concepts: { name: string; value: number }[] | undefined) => {
+    if (!concepts || concepts.length === 0) {
+      return null;
+    }
+    return concepts.reduce((p, c) => (p.value > c.value ? p : c));
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://us-central1-api-skinstric-ai.cloudfunctions.net/skinstricPhaseTwo');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setAnalysisResult(data);
+        const topRace = getTopConcept(data?.demographics?.multicultural_appearance?.concepts);
+        if (topRace) {
+          setSelectedConcept(topRace);
+        }
+      } catch (err) {
+        console.error('Failed to fetch analysis results:', err);
+        setError('Failed to fetch analysis results');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleSidebarClick = (view: string) => {
     setActiveView(view);
-    let topConcept;
+    let topConcept = null;
     if (view === 'race') {
-      topConcept = analysisResult.demographics.multicultural_appearance.concepts.reduce(
-        (prev, current) => (prev.value > current.value ? prev : current)
-      );
+      topConcept = getTopConcept(analysisResult?.demographics?.multicultural_appearance?.concepts);
     } else if (view === 'age') {
-      topConcept = analysisResult.demographics.age_appearance.concepts.reduce(
-        (prev, current) => (prev.value > current.value ? prev : current)
-      );
+      topConcept = getTopConcept(analysisResult?.demographics?.age_appearance?.concepts);
     } else if (view === 'sex') {
-      topConcept = analysisResult.demographics.gender_appearance.concepts.reduce(
-        (prev, current) => (prev.value > current.value ? prev : current)
-      );
+      topConcept = getTopConcept(analysisResult?.demographics?.gender_appearance?.concepts);
     }
-    if (topConcept) {
-      setSelectedConcept(topConcept);
-    }
+    setSelectedConcept(topConcept);
+  };
+
+  const handleBackClick = () => {
+    router.push('/ai-analysis');
   };
 
   const handleConceptClick = (concept: { name: string; value: number }) => {
     setSelectedConcept(concept);
   };
 
-  if (!analysisResult || !analysisResult.demographics) {
+  const handleRedirectToHome = () => {
+    router.push('/');
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!analysisResult || !analysisResult.demographics || !selectedConcept) {
     return <div>Loading...</div>;
   }
 
@@ -177,8 +173,8 @@ const DemographicsPage = () => {
           <span>BACK</span>
         </button>
         <div className="footer-buttons">
-          <button className="reset-btn">RESET</button>
-          <button className="confirm-btn">CONFIRM</button>
+          <button className="reset-btn" onClick={handleRedirectToHome}>RESET</button>
+          <button className="confirm-btn" onClick={handleRedirectToHome}>CONFIRM</button>
         </div>
       </footer>
     </div>

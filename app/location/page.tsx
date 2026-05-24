@@ -36,7 +36,7 @@ const LocationPage = () => {
     }
 
     try {
-      const response = await fetch('/api/skinstric', {
+      const response = await fetch('https://us-central1-api-skinstric-ai.cloudfunctions.net/skinstricPhaseOne', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
