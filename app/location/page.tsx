@@ -111,8 +111,7 @@ const LocationPage = () => {
       </main>
       <footer className="footer analysis-footer">
         <button className="back-btn" onClick={handleBackClick}>
-          <div className="back-arrow"></div>
-          <span>BACK</span>
+          <Image src="/back-button.svg" alt="Back" width={97} height={44} />
         </button>
         {submissionComplete && (
           <button className="proceed-btn" onClick={() => router.push('/image')}>

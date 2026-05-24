@@ -1,0 +1,72 @@
+
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+.loading-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.loading-diamond {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+.loading-diamond .camera-icon {
+    cursor: default;
+}
+
+.loading-diamond .camera-icon::after {
+    display: none;
+}
+
+.loading-text {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    color: #000;
+}
+
+.loading-footer {
+    text-align: center;
+    position: absolute;
+    bottom: 5rem;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.loading-footer ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.loading-footer li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.loading-footer li::before {
+    content: '◇';
+}
