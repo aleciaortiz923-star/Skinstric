@@ -19,7 +19,7 @@ const DemographicsPage = () => {
   const analysisResult = useMemo<AnalysisResult | null>(() => {
     if (!results) return null;
     try {
-      return JSON.parse(results);
+      return JSON.parse(decodeURIComponent(results));
     } catch (error) {
       console.error('Failed to parse analysis results:', error);
       return null;
@@ -51,10 +51,6 @@ const DemographicsPage = () => {
     setActiveView(view);
     setOverriddenConcept(null);
   };
-
-  useEffect(() => {
-    console.log('Analysis Result from API:', analysisResult);
-  }, [analysisResult]);
 
   const handleBackClick = () => {
     router.push('/');

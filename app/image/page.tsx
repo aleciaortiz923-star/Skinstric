@@ -99,7 +99,7 @@ const ResultsPage = () => {
     if (imageToAnalyze) {
       setIsAnalyzing(true);
       try {
-        const response = await fetch('https://us-central1-api-skinstric-ai.cloudfunctions.net/skinstricPhaseTwo', {
+        const response = await fetch('/api/skinstric', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -107,7 +107,8 @@ const ResultsPage = () => {
           body: JSON.stringify({ image: imageToAnalyze }),
         });
         const analysisResult = await response.json();
-        router.push(`/ai-analysis?results=${JSON.stringify(analysisResult)}`);
+        const finalResult = analysisResult.data || analysisResult;
+        router.push(`/ai-analysis?results=${encodeURIComponent(JSON.stringify(finalResult))}`);
       } catch (error) {
         console.error('Error analyzing image:', error);
       } finally {

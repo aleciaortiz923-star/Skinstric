@@ -20,7 +20,7 @@ const AIAnalysisPage = () => {
   const analysisResult = useMemo<AnalysisResult | null>(() => {
     if (results) {
       try {
-        return JSON.parse(results);
+        return JSON.parse(decodeURIComponent(results));
       } catch (e) {
         console.error("Failed to parse analysis results:", e);
         return null;
@@ -30,7 +30,7 @@ const AIAnalysisPage = () => {
   }, [results]);
 
   const handleDemographicsClick = () => {
-    router.push(`/demographics?results=${JSON.stringify(analysisResult)}`);
+    router.push(`/demographics?results=${encodeURIComponent(JSON.stringify(analysisResult))}`);
   };
 
   const handleBackClick = () => {
