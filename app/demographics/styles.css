@@ -1,0 +1,167 @@
+.demographics-page .main-content {
+    display: grid;
+    grid-template-areas:
+        "text text text"
+        "sidebar main aside";
+    grid-template-columns: 0.5fr 2.75fr 0.75fr;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.demographics-text-container {
+    grid-area: text;
+    margin-top: -4rem; /* Adjust vertical position */
+}
+
+.demographics-text-container .analysis-title {
+    font-size: 4.5rem; /* Increased font size */
+    margin-top: -1rem; /* Move it closer to the text above */
+}
+
+.demographics-text-container .analysis-title + .analysis-subtitle {
+    margin-top: -2.25rem; /* Move it closer to the title above */
+}
+
+.demographics-sidebar {
+    grid-area: sidebar;
+    transform: translateY(-22%); /* Move sidebar up */
+}
+
+.demographics-main {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: #f9f9f9; /* Light grey background */
+    border-top: 1px solid #000; /* Visible top line */
+    padding: 1.5rem; /* Add some padding */
+    transform: translateY(-9%);
+    min-height: 500px;
+}
+
+.demographics-aside {
+    grid-area: aside;
+    background-color: #f9f9f9; /* Light grey background */
+    border-top: 1px solid #000; /* Visible top line */
+    transform: translateY(-11%);
+    min-height: 531px;
+}
+
+.sidebar-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Push content to top and bottom */
+    align-items: flex-start; /* Align text to the left */
+    height: 100px; /* Adjust as needed */
+    padding: 1rem 1.5rem; /* Add vertical and horizontal padding */
+    font-weight: bold; /* Make font bold */
+    text-transform: uppercase; /* Capitalize font */
+    border: 1px solid #ccc;
+    margin-bottom: 1rem;
+    background-color: #f0f0f0; /* Light gray for inactive */
+    color: #000;
+    cursor: pointer;
+}
+
+.sidebar-item.active {
+    background-color: #000; /* Black for active */
+    color: #fff;
+}
+
+.sidebar-item:not(.active):hover {
+    background-color: #e0e0e0; /* Slightly darker grey on hover */
+}
+
+.demographics-main h3 {
+    font-size: 2rem;
+    font-weight: normal;
+    text-transform: capitalize;
+}
+
+.confidence-chart {
+    width: 250px;
+    height: 250px;
+    align-self: flex-end;
+}
+
+.chart-background {
+    fill: none;
+    stroke: #e0e0e0;
+    stroke-width: 5;
+}
+
+.chart-progress {
+    fill: none;
+    stroke: #000;
+    stroke-width: 5;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transition: stroke-dasharray 0.5s ease-in-out;
+}
+
+.chart-text {
+    font-size: 2rem;
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+
+.race-list {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    padding: 0rem 1.5rem 0.75rem;
+}
+
+.demographics-aside ul {
+    list-style: none;
+    padding: 0 1.5rem 1.5rem;
+}
+
+.demographics-aside li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+}
+
+.demographics-aside li:not(.active):hover {
+    background-color: #e0e0e0; /* Slightly darker grey on hover */
+    cursor: pointer;
+}
+
+.demographics-aside li .race-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.demographics-aside li.active {
+    background-color: #000;
+    color: #fff;
+    font-weight: bold;
+}
+
+.demographics-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+}
+
+.footer-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.reset-btn, .confirm-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #000;
+    background: none;
+    cursor: pointer;
+}
+
+.confirm-btn {
+    background-color: #000;
+    color: #fff;
+}

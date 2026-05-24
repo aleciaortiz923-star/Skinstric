@@ -5,6 +5,7 @@ import { FaMountainSun } from 'react-icons/fa6';
 import { useRef, useState, useEffect } from 'react';
 import LoadingScreen from './loading';
 
+
 const ResultsPage = () => {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -13,6 +14,9 @@ const ResultsPage = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -33,8 +37,11 @@ const ResultsPage = () => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
-      console.log('Selected file:', files[0]);
-      // You can add further logic here to handle the selected file
+      const reader = new FileReader();
+      reader.onload = () => {
+        setSelectedImage(reader.result as string);
+      };
+      reader.readAsDataURL(files[0]);
     }
   };
 
@@ -87,9 +94,26 @@ const ResultsPage = () => {
     }
   };
 
-  const handleUseImage = () => {
-    // Logic to handle using the image will go here
-    console.log("Using image:", capturedImage);
+  const handleUseImage = async () => {
+    const imageToAnalyze = capturedImage || selectedImage;
+    if (imageToAnalyze) {
+      setIsAnalyzing(true);
+      try {
+        const response = await fetch('/api/skinstric', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ image: imageToAnalyze }),
+        });
+        const analysisResult = await response.json();
+        router.push(`/ai-analysis?results=${JSON.stringify(analysisResult)}`);
+      } catch (error) {
+        console.error('Error analyzing image:', error);
+      } finally {
+        setIsAnalyzing(false);
+      }
+    }
   };
 
 
@@ -139,7 +163,7 @@ const ResultsPage = () => {
         />
         {cameraError && <p className="error-message">{cameraError}</p>}
       </main>
-      {isLoading && <LoadingScreen />}
+      {isLoading && <LoadingScreen message="SETTING UP CAMERA..." />}
       {showGalleryConfirmation && (
         <div className="confirmation-dialog">
           <div className="confirmation-content">
@@ -148,6 +172,20 @@ const ResultsPage = () => {
               <button className="allow-button" onClick={() => handleGalleryConfirmation(true)}>Yes</button>
               <button className="deny-button" onClick={() => handleGalleryConfirmation(false)}>No</button>
             </div>
+          </div>
+        </div>
+      )}
+      {isAnalyzing && <LoadingScreen message="PREPARING YOUR ANALYSIS..." showCameraIcon={false} />}
+
+      {selectedImage && (
+        <div className="captured-image-view">
+          <Image src={selectedImage} alt="Selected" width={600} height={400} />
+          <div className="great-shot-caption">
+            <p>Great Shot</p>
+          </div>
+          <div className="captured-image-buttons">
+            <button onClick={() => setSelectedImage(null)}>Retake</button>
+            <button onClick={handleUseImage}>Use This Image</button>
           </div>
         </div>
       )}
