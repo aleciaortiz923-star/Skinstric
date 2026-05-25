@@ -129,33 +129,53 @@ const ResultsPage = () => {
         </div>
         <p className="analysis-side-text">TO START ANALYSIS</p>
       </header>
+
       <main className="main-content">
-        <div className="dual-diamond-wrapper">
-          <div className="diamond-container" onClick={handleCameraClick}>
-            <div className="inner-diamond"></div>
-            <div className="camera-scan-wrapper">
-              <div className="camera-icon"><div className="camera-icon-inner"></div></div>
-              <div className="camera-text">
-                ALLOW A.I. <br />
-                TO SCAN YOUR FACE
-              </div>
+        {selectedImage || capturedImage ? (
+          <div className="great-shot-view">
+            <Image src={(selectedImage || capturedImage)!} alt="Captured" width={600} height={400} />
+            <div className="great-shot-caption">
+              <p>Great Shot</p>
+            </div>
+            <div className="captured-image-buttons">
+              <button className="action-btn" onClick={() => { setSelectedImage(null); setCapturedImage(null); }}>
+                <div className="diamond-back-arrow"></div>
+                <span>Retake</span>
+              </button>
+              <button className="action-btn" onClick={handleUseImage}>
+                <span>Use This Image</span>
+                <div className="diamond-play-icon"></div>
+              </button>
             </div>
           </div>
-          <div className="diamond-container" onClick={handleGalleryClick}>
-            <div className="inner-diamond"></div>
-            <div className="gallery-icon-wrapper">
-              <div className="icon-in-circle">
-                <div className="icon-in-circle-hover-target">
-                  <FaMountainSun className="gallery-icon" />
+        ) : (
+          <div className="dual-diamond-wrapper">
+            <div className="diamond-container" onClick={handleCameraClick}>
+              <div className="inner-diamond"></div>
+              <div className="camera-scan-wrapper">
+                <div className="camera-icon"><div className="camera-icon-inner"></div></div>
+                <div className="camera-text">
+                  ALLOW A.I. <br />
+                  TO SCAN YOUR FACE
                 </div>
               </div>
-              <div className="gallery-text">
-                ALLOW A.I. <br />
-                ACSESS TO GALLERY
+            </div>
+            <div className="diamond-container" onClick={handleGalleryClick}>
+              <div className="inner-diamond"></div>
+              <div className="gallery-icon-wrapper">
+                <div className="icon-in-circle">
+                  <div className="icon-in-circle-hover-target">
+                    <FaMountainSun className="gallery-icon" />
+                  </div>
+                </div>
+                <div className="gallery-text">
+                  ALLOW A.I. <br />
+                  ACSESS TO GALLERY
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
         <input
           type="file"
           ref={fileInputRef}
@@ -165,6 +185,7 @@ const ResultsPage = () => {
         />
         {cameraError && <p className="error-message">{cameraError}</p>}
       </main>
+
       {isLoading && <LoadingScreen message="SETTING UP CAMERA..." />}
       {showGalleryConfirmation && (
         <div className="confirmation-dialog">
@@ -179,18 +200,6 @@ const ResultsPage = () => {
       )}
       {isAnalyzing && <LoadingScreen message="PREPARING YOUR ANALYSIS..." showCameraIcon={false} />}
 
-      {selectedImage && (
-        <div className="captured-image-view">
-          <Image src={selectedImage} alt="Selected" width={600} height={400} />
-          <div className="great-shot-caption">
-            <p>Great Shot</p>
-          </div>
-          <div className="captured-image-buttons">
-            <button onClick={() => setSelectedImage(null)}>Retake</button>
-            <button onClick={handleUseImage}>Use This Image</button>
-          </div>
-        </div>
-      )}
       {showCameraConfirmation && (
         <div className="confirmation-dialog">
           <div className="confirmation-content">
@@ -222,18 +231,6 @@ const ResultsPage = () => {
               <li>FRONTAL POSE</li>
               <li>ADEQUATE LIGHTING</li>
             </ul>
-          </div>
-        </div>
-      )}
-      {capturedImage && (
-        <div className="captured-image-view">
-          <Image src={capturedImage} alt="Captured" width={600} height={400} />
-          <div className="great-shot-caption">
-            <p>Great Shot</p>
-          </div>
-          <div className="captured-image-buttons">
-            <button onClick={() => { setCapturedImage(null); setShowCamera(true); }}>Retake</button>
-            <button onClick={handleUseImage}>Use This Image</button>
           </div>
         </div>
       )}

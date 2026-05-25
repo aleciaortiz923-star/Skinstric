@@ -23,10 +23,32 @@ export async function POST(request: Request) {
     }
 
     const data = await response.json();
-    return NextResponse.json({ success: true, data });
+   const rawData = data.data || data;
 
+   const formatConcepts = (obj: Record<string, number> = {} ) => {
+    return Object.entries(obj).map(([name, value])=> ({
+      name,
+      value,
+    }))
+   }
+   return NextResponse.json({
+    demographics: {
+      age_appearance: {
+        concepts: formatConcepts(rawData.age),
+        raw: rawData.age,
+      },
+      gender_appearance: {
+        concepts: formatConcepts(rawData.gender),
+        raw: rawData.gender,
+      },
+      multicultural_appearance: {
+        concepts: formatConcepts(rawData.race),
+        raw: rawData.race,
+      },
+    },
+   });
   } catch (error) {
-    console.error('Internal Server Error:', error);
+    console.error('Error in POST handler:', error);
     return NextResponse.json({ success: false, message: 'An internal server error occurred.' }, { status: 500 });
   }
 }

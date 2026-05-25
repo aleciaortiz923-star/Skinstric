@@ -5,9 +5,9 @@ import './styles.css';
 
 interface AnalysisResult {
   demographics: {
-    age_appearance: { concepts: { name: string; value: number }[] };
-    gender_appearance: { concepts: { name: string; value: number }[] };
-    multicultural_appearance: { concepts: { name: string; value: number }[] };
+    age_appearance: { concepts: { name: string; value: number }[], raw: Record<string, number> };
+    gender_appearance: { concepts: { name: string; value: number }[], raw: Record<string, number> };
+    multicultural_appearance: { concepts: { name: string; value: number }[], raw: Record<string, number> };
   };
 }
 
@@ -33,14 +33,22 @@ const DemographicsPage = () => {
   const [activeView, setActiveView] = useState('race');
   const [overriddenConcept, setOverriddenConcept] = useState<{ name: string; value: number } | null>(null);
 
-  const getTopConcept = (concepts: { name: string; value: number }[] | undefined) => {
-    if (!concepts || concepts.length === 0) return null;
-    return concepts.reduce((p, c) => (p.value > c.value ? p : c));
+  const getTopPrediction = (obj: Record<string, number> | undefined): { name: string; value: number } | null => {
+    if (!obj) return null;
+    const top = Object.entries(obj).sort((a, b) => b[1] - a[1])[0];
+    if (!top) return null;
+    return { name: top[0], value: top[1] };
   };
 
-  const topRace = useMemo(() => getTopConcept(analysisResult?.demographics?.multicultural_appearance?.concepts), [analysisResult]);
-  const topAge = useMemo(() => getTopConcept(analysisResult?.demographics?.age_appearance?.concepts), [analysisResult]);
-  const topGender = useMemo(() => getTopConcept(analysisResult?.demographics?.gender_appearance?.concepts), [analysisResult]);
+  const topAge = useMemo(() => getTopPrediction(analysisResult?.demographics?.age_appearance?.raw), [analysisResult]);
+  const topGender = useMemo(() => getTopPrediction(analysisResult?.demographics?.gender_appearance?.raw), [analysisResult]);
+  const topRace = useMemo(() => getTopPrediction(analysisResult?.demographics?.multicultural_appearance?.raw), [analysisResult]);
+
+  useEffect(() => {
+    console.log("Top age:", topAge);
+    console.log("Top gender:", topGender);
+    console.log("Top race:", topRace);
+  }, [topAge, topGender, topRace]);
 
   const defaultConcept = useMemo(() => {
     if (activeView === 'race') return topRace || topAge || topGender;
@@ -100,15 +108,15 @@ const DemographicsPage = () => {
       <>
         <div className="demographics-sidebar">
           <div className={`sidebar-item ${activeView === 'race' ? 'active' : ''}`} onClick={() => handleSidebarClick('race')}>
-            <span>{raceData.reduce((p, c) => p.value > c.value ? p : c).name}</span>
+            <span>{topRace?.name}</span>
             <p>RACE</p>
           </div>
           <div className={`sidebar-item ${activeView === 'age' ? 'active' : ''}`} onClick={() => handleSidebarClick('age')}>
-            <span>{ageData.reduce((p, c) => p.value > c.value ? p : c).name}</span>
+            <span>{topAge?.name}</span>
             <p>AGE</p>
           </div>
           <div className={`sidebar-item ${activeView === 'sex' ? 'active' : ''}`} onClick={() => handleSidebarClick('sex')}>
-            <span>{genderData[0].name}</span>
+            <span>{topGender?.name}</span>
             <p>SEX</p>
           </div>
         </div>

@@ -191,7 +191,7 @@ body {
 }
 
 .brand-logo {
-  font-weight: bold;
+  font-weight: 900;
 }
 
 .enter-code-btn {
@@ -443,6 +443,64 @@ body {
   transform: scale(1.1);
 }
 
+.action-btn {
+  background: none;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.action-btn:hover {
+  transform: scale(1.05);
+  color: #000;
+}
+
+.diamond-play-icon {
+    width: 24px;
+    height: 24px;
+    border: 1px solid currentColor;
+    transform: rotate(45deg);
+    margin-left: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.diamond-play-icon::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 8px solid currentColor;
+    transform: rotate(-45deg) translateX(-2px);
+}
+
+.diamond-back-arrow {
+  width: 24px;
+  height: 24px;
+  border: 1px solid currentColor;
+  transform: rotate(45deg);
+  margin-right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.diamond-back-arrow::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-left: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg) translate(1px, -2px);
+}
+
 .back-arrow {
   width: 20px;
   height: 20px;
@@ -635,8 +693,9 @@ body {
 }
 
 .great-shot-caption {
-  color: #fff;
+  color: #000;
   font-size: 1.5rem;
+  font-weight: bold;
   margin-top: 1rem;
 }
 
@@ -644,6 +703,7 @@ body {
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
+  margin-left: 23%;
 }
 
 .error-message {
