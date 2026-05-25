@@ -30,7 +30,10 @@ const AIAnalysisPage = () => {
   }, [results]);
 
   const handleDemographicsClick = () => {
-    router.push(`/demographics?results=${encodeURIComponent(JSON.stringify(analysisResult))}`);
+    console.log("Parsed Demographics results:", analysisResult) ;
+    router.push(
+      `/demographics?results=${encodeURIComponent(JSON.stringify(analysisResult))}`
+    );
   };
 
   const handleBackClick = () => {

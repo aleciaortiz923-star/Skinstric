@@ -26,6 +26,10 @@ const DemographicsPage = () => {
     }
   }, [results]);
 
+  useEffect(() => {
+    console.log("Parsed Demographics results:", analysisResult) ;
+  }, [analysisResult]);
+
   const [activeView, setActiveView] = useState('race');
   const [overriddenConcept, setOverriddenConcept] = useState<{ name: string; value: number } | null>(null);
 
