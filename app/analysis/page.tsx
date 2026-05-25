@@ -6,17 +6,8 @@ import { useRouter } from 'next/navigation';
 const AnalysisPage = () => {
   const router = useRouter();
   const [name, setName] = useState('');
-  const [isNameValid, setIsNameValid] = useState(false);
-
-  const validateName = (name: string) => {
-    const nameParts = name.trim().split(' ');
-    return nameParts.length >= 2 && nameParts.every(part => part.length > 0);
-  };
-
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newName = e.target.value;
-    setName(newName);
-    setIsNameValid(validateName(newName));
+    setName(e.target.value);
   };
 
   const handleBackClick = () => {
@@ -24,8 +15,9 @@ const AnalysisPage = () => {
   };
 
   const handleNameSubmit = async () => {
-    if (!isNameValid) return;
-    router.push(`/location?name=${encodeURIComponent(name)}`);
+    if (name.trim().length > 0) {
+      router.push(`/location?name=${encodeURIComponent(name)}`);
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
